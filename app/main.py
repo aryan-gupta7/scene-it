@@ -11,6 +11,7 @@ import re
 import os
 from sqlalchemy.sql import func
 import logging
+from sqlalchemy import text
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24).hex()
@@ -195,14 +196,14 @@ def home():
     ongoing_events = Event.query.filter(
         (Event.date == today) & 
         (Event.timing <= current_time) &
-        (func.addtime(func.time(Event.timing), func.sec_to_time(Event.duration * 60)) > func.time(current_time))
+        (Event.timing + text('INTERVAL \'1 minute\' * duration') > current_time)
     ).order_by(Event.timing).all()
 
     # Past events: previous dates and today's ended events
     past_events = Event.query.filter(
         (Event.date < today) |
         ((Event.date == today) & 
-         (func.addtime(func.time(Event.timing), func.sec_to_time(Event.duration * 60)) <= func.time(current_time)))
+         (Event.timing + text('INTERVAL \'1 minute\' * duration') <= current_time))
     ).order_by(Event.date.desc(), Event.timing.desc()).limit(7).all()
 
     def serialize_event(event):
