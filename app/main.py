@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, time, date
 import re
 import os
 from sqlalchemy.sql import func
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24).hex()
@@ -316,7 +317,13 @@ def add_event():
     
     return render_template('add_event.html', form=form)
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+
+if not app.debug:
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    app.logger.addHandler(stream_handler)
+
+app.logger.setLevel(logging.INFO)
+app.logger.info('Flask App Startup')
+
+
