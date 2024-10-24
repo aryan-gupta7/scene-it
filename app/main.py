@@ -14,8 +14,6 @@ import logging
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24).hex()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['POSTGRES_URL'].replace("postgres://", "postgresql://")
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://default:SH6usvLf3lVo@ep-little-bonus-a4j6t1zo-pooler.us-east-1.aws.neon.tech/verceldb?sslmode=require'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/www'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 csrf = CSRFProtect(app)
 
